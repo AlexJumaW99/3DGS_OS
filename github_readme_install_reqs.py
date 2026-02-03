@@ -9,17 +9,26 @@ def run_command(command, shell=True):
     except subprocess.CalledProcessError as e:
         print(f"Error occurred while executing: {command}\n{e}")
         sys.exit(1)
+        
 
 def install_nerfstudio_prerequisites():
     print("--- Starting Nerfstudio Prerequisite Installation ---")
 
-    # 1. Create and update Conda environment
+    # PROMPT USER FOR ENVIRONMENT NAME
+    env_name = input("Please enter a name for the new Conda environment: ").strip()
+    
+    if not env_name:
+        print("Error: Environment name cannot be empty.")
+        sys.exit(1)
+
+    # 1. Create and update Conda environment using the chosen name
     # Note: Using 'shell=True' to ensure conda commands are recognized
-    run_command("conda create --name nerfstudio -y python=3.8")
+    print(f"--- Creating Conda Environment '{env_name}' ---")
+    run_command(f"conda create --name {env_name} -y python=3.8")
     
     # Building the installation command sequence
-    # We use 'conda run -n nerfstudio' to ensure commands execute inside the new env
-    env_prefix = "conda run -n nerfstudio"
+    # We use 'conda run -n {env_name}' to ensure commands execute inside the new env
+    env_prefix = f"conda run -n {env_name}"
 
     print("--- Updating Pip ---")
     run_command(f"{env_prefix} pip install --upgrade pip")
@@ -45,8 +54,8 @@ def install_nerfstudio_prerequisites():
     run_command(f"{env_prefix} pip install nerfstudio")
 
     print("\n--- Installation Complete! ---")
-    print("To start using the environment, run:")
-    print("conda activate nerfstudio")
+    print(f"To start using the environment, run:")
+    print(f"conda activate {env_name}")
 
 if __name__ == "__main__":
     install_nerfstudio_prerequisites()
