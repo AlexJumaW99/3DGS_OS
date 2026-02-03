@@ -22,7 +22,6 @@ def install_nerfstudio_prerequisites():
         sys.exit(1)
 
     # 1. Create and update Conda environment using the chosen name
-    # Note: Using 'shell=True' to ensure conda commands are recognized
     print(f"--- Creating Conda Environment '{env_name}' ---")
     run_command(f"conda create --name {env_name} -y python=3.8")
     
@@ -31,12 +30,13 @@ def install_nerfstudio_prerequisites():
     env_prefix = f"conda run -n {env_name}"
 
     print("--- Updating Pip ---")
-    run_command(f"{env_prefix} pip install --upgrade pip")
+    # FIX: Changed 'pip' to 'python -m pip' to resolve the upgrade error
+    run_command(f"{env_prefix} python -m pip install --upgrade pip")
 
     print("--- Installing PyTorch with CUDA 11.8 Support ---")
     # Reference:
     pytorch_cmd = (
-        f"{env_prefix} pip install torch==2.1.2+cu118 torchvision==0.16.2+cu118 "
+        f"{env_prefix} python -m pip install torch==2.1.2+cu118 torchvision==0.16.2+cu118 "
         "--extra-index-url https://download.pytorch.org/whl/cu118"
     )
     run_command(pytorch_cmd)
@@ -47,11 +47,12 @@ def install_nerfstudio_prerequisites():
 
     print("--- Installing tiny-cuda-nn ---")
     # Ninja is required for building tiny-cuda-nn
-    run_command(f"{env_prefix} pip install ninja git+https://github.com/NVlabs/tiny-cuda-nn/#subdirectory=bindings/torch")
+    # Updated to use python -m pip for consistency
+    run_command(f"{env_prefix} python -m pip install ninja git+https://github.com/NVlabs/tiny-cuda-nn/#subdirectory=bindings/torch")
 
     print("--- Installing Nerfstudio Core ---")
-    # Installing the base package via pip
-    run_command(f"{env_prefix} pip install nerfstudio")
+    # Updated to use python -m pip for consistency
+    run_command(f"{env_prefix} python -m pip install nerfstudio")
 
     print("\n--- Installation Complete! ---")
     print(f"To start using the environment, run:")
